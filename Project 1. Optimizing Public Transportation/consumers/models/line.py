@@ -58,7 +58,7 @@ class Line:
 
     def process_message(self, message):
         """Given a kafka message, extract data"""
-        # TODO: Based on the message topic, call the appropriate handler.
+        # Based on the message topic, call the appropriate handler.
         # Set the conditional correctly to the stations Faust Table
         if message.topic.startswith('org.chicago.cta.station.table.v1'):
             try:
