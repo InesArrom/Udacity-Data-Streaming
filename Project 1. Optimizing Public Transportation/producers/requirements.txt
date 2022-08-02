@@ -1,3 +1,5 @@
-confluent-kafka[avro]==1.1.0
-pandas==0.24.2
+# confluent-kafka[avro]==1.1.0
+confluent-kafka[avro]==1.6.0
+# pandas==0.24.2
+pandas==0.25.3
 requests==2.22.0
