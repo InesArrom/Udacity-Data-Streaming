@@ -2,7 +2,7 @@
 import logging
 
 import confluent_kafka
-from confluent_kafka import Consumer
+from confluent_kafka import Consumer, OFFSET_BEGINNING
 from confluent_kafka.avro import AvroConsumer
 from confluent_kafka.avro.serializer import SerializerError
 from tornado import gen
@@ -39,7 +39,7 @@ class KafkaConsumer:
         self.broker_properties = {
             "bootstrap.servers": BROKER_URL,
             "group.id": self.topic_name_pattern,
-            "default.topic.config": {"auto.offset.reset": "earliest"}
+            "default.topic.config": {"auto.offset.reset": "earliest" if offset_earliest else "latest"}
         }
 
         # Create the Consumer, using the appropriate type.
@@ -59,7 +59,7 @@ class KafkaConsumer:
         # the beginning or earliest
         for partition in partitions:
             if self.offset_earliest:
-                partition.offset = confluent_kafka.OFFSET_BEGINNING
+                partition.offset = OFFSET_BEGINNING
 
         logger.info("partitions assigned for %s", self.topic_name_pattern)
         consumer.assign(partitions)
@@ -86,8 +86,8 @@ class KafkaConsumer:
                     logger.error(f"Consumer error: {message.error()}")
                     return 0
                 else:
-                    logger.info("Received message")
                     self.message_handler(message)
+                    logger.info(f"Consumer Message key: {message}")
                     return 1
             except Exception as e:
                 logger.error(f"Poll error: {e}")
